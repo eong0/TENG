@@ -1,0 +1,34 @@
+// VerilogA for eon, pulse_gen, veriloga
+
+`include "constants.vams"
+`include "disciplines.vams"
+
+
+module pulse_gen (clk);
+
+output clk;
+electrical clk;
+
+real clk_var1;        
+real per1,per2;
+parameter real tt=1n;      
+
+analog begin 
+	@ (initial_step)
+		begin
+			per1 = $abstime + 2n;
+		end
+
+	@(timer(0,per1)) begin
+		clk_var1=1;
+		per2 = 2.5n;
+		@(timer(per1,per2)) begin
+			clk_var1 = 0;
+			per2 = 0;
+		end
+	end
+
+		V(clk) <+ transition(clk_var1,0,tt);
+  
+  end
+endmodule

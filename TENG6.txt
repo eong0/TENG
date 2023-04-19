@@ -1,0 +1,69 @@
+// VerilogA for eon, TENG, veriloga
+
+`include "constants.vams"
+`include "disciplines.vams"
+
+module TENG(X,Icap,Vteng);
+
+//   input [3:0] Q; 
+//   input [3:0] X;
+   
+   electrical X,Icap,Vteng;
+ 
+   real e0 = 8.85e-14 * 1e+15;
+   real sig = 50;
+   real d0 = 4;//thickness
+   real S = 10;//area
+   real dt = 1e-6 * 2e+18;
+   real Q = 12;
+
+   electrical  	  Cap=0;
+   electrical 	  Vcap=0;
+
+   analog begin  
+
+      V(Cap) <+ S*e0/(d0 + V(X));
+      V(Vcap) <+ -Q/V(Cap);
+      V(Vteng) <+ V(Vcap) + sig*V(X)/e0;
+      I(Icap) <+ -ddt(V(Vcap)/dt)*V(Cap);
+   end // UNMATCHED !!
+   
+endmodule // TENG 
+
+
+-------------------------------------------
+// VerilogA for eon, TENG, veriloga
+
+`include "constants.vams"
+`include "disciplines.vams"
+
+module TENG(X,Icap,Vteng);
+
+//   input [3:0] Q; 
+//   input [3:0] X;
+   
+   electrical X,Icap,Vteng;
+ 
+   real e0 = 8.85e-14 * 1e+15;
+   real sig = 50;
+   real d0 = 4;//thickness
+   real S = 10;//area
+   real dt = 1e-6 * 2e+18;
+   real Q = 12;
+
+   electrical  	  Cap=0;
+   electrical 	  Vcap=0;
+
+   analog begin  
+	if(V(X) == 8) begin
+      V(Cap) <+ S*e0/(d0 + V(X));
+      V(Vcap) <+ -Q/V(Cap);
+      V(Vteng) <+ V(Vcap) + sig*V(X)/e0;
+   //   I(Icap) <+ -ddt(V(Vcap)/dt)*V(Cap);
+    end
+    else begin
+		V(Vteng) <+ 0;
+	end
+   end // UNMATCHED !!
+   
+endmodule // TENG 

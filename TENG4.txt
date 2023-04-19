@@ -1,0 +1,89 @@
+// VerilogA for eon, pulse_generator, veriloga
+
+`include "constants.vams"
+`include "disciplines.vams"
+
+module pulse_generator(in,out);
+	inout in, out;
+	electrical in, out;
+	parameter real t_high = 1e-9; //rising time
+	parameter real t_low = 1e-9; //falling time
+	parameter real t_period = 10e-9; // pulse period
+	real t_last_pulse = 0; 
+	real t_last_pulse1 = 0;
+	real t_elapsed;
+	real t_elapsed1;
+	real pulse_value=0; 
+	real pulse_value1 =0;
+
+	real vdd = 1.0;
+
+
+	analog begin 
+	@ (cross (V(in)-0.5*vdd))
+		begin
+
+			if (V(in) == 1) 
+				begin
+			     	t_elapsed = $abstime - t_last_pulse;
+
+					if(t_elapsed > t_period) 
+						begin
+							t_last_pulse = $abstime;
+							pulse_value = 1;
+						end
+
+					else if (t_elapsed > t_high) 
+						pulse_value = 0;
+
+					else if (t_elapsed > t_low)
+						pulse_value = 1;
+
+					else
+						pulse_value = 0;
+				end
+
+			else if (V(in) == 0)
+				begin
+					t_elapsed1 = $abstime - t_last_pulse1;
+
+					if(t_elapsed1 > t_period) 
+						begin
+							t_last_pulse1 = $abstime;
+							pulse_value1 = 1;
+						end
+
+					else if (t_elapsed1 > t_high) 
+						pulse_value1 = 0;
+
+					else if (t_elapsed1 > t_low)
+						pulse_value1 = 1;
+					else
+						pulse_value1 = 0;
+				end 
+		end
+		 
+/*
+	 @ (cross (0.5*vdd-V(in)))
+		begin		
+			t_elapsed1 = $abstime - t_last_pulse1;
+
+			if(t_elapsed1 > t_period) 
+				begin
+					t_last_pulse1 = $abstime;
+					pulse_value1 = 1;
+				end
+
+			else if (t_elapsed1 > t_high) 
+				pulse_value1 = 0;
+
+			else if (t_elapsed1 > t_low)
+				pulse_value1 = 1;
+
+			else
+				pulse_value1 = 0;
+		end
+*/
+	V(out) <+ pulse_value*60 + pulse_value1*(-80);
+	end
+endmodule

@@ -1,0 +1,32 @@
+// VerilogA for eon, pulse_gen, veriloga
+
+`include "constants.vams"
+`include "disciplines.vams"
+
+
+module pulse_gen (vin, vout);
+
+electrical vin,vout;
+real t=0;        
+real vdd = 1.0;
+real vtemp;      
+
+analog begin @ (cross(V(vin) - 0.5*vdd))
+begin
+  if (t == 0) begin  
+    t = 0;
+    vtemp = 0;
+  end 
+  else begin
+    t = t + 1e-9;   
+    if (t >= 50e-9) begin  
+      t = 0; 
+	  vtemp = -vtemp;              
+      //V(vout) <+ -V(vout);       
+    end
+  end
+end
+V(vout) <+ vtemp;
+end
+
+endmodule
