@@ -18,4 +18,4 @@ def format_timedelta(td):
      return f"{result}.{ms:02}".replace(":","-")
     
 def get_saving_frames_durations(cap,saving_fps):
-  ''' 
+  '''frame 을 정리할 리스트를 정리해주는 함수임'''
